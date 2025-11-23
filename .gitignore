@@ -9,6 +9,9 @@ dist/
 web-build/
 expo-env.d.ts
 
+# tailwind
+nativewind-env.d.ts
+
 # Native
 .kotlin/
 *.orig.*
