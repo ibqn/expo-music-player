@@ -1,5 +1,7 @@
 import { colors, fontSizes } from "@/constants/tokens"
+import { BlurView } from "expo-blur"
 import { Tabs } from "expo-router"
+import { StyleSheet } from "react-native"
 
 export default function TabsLayout() {
   return (
@@ -11,6 +13,24 @@ export default function TabsLayout() {
           fontWeight: 500,
         },
         headerShown: false,
+        tabBarBackground: () => (
+          <BlurView
+            intensity={95}
+            style={{
+              ...StyleSheet.absoluteFillObject,
+              overflow: "hidden",
+              borderTopLeftRadius: 20,
+              borderTopRightRadius: 20,
+            }}
+          />
+        ),
+        tabBarStyle: {
+          position: "absolute",
+          borderTopLeftRadius: 20,
+          borderTopRightRadius: 20,
+          borderTopWidth: 0,
+          paddingTop: 8,
+        },
       }}
     >
       <Tabs.Screen name="favorites" />
