@@ -16,5 +16,8 @@ const RootNavigation = () => {
     <Stack>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
     </Stack>
+    // <View style={{ flex: 1, backgroundColor: "white" }}>
+    //   <Text>Tabs layout placeholder</Text>
+    // </View>
   )
 }
