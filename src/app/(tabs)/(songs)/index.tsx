@@ -5,8 +5,11 @@ import { View } from "react-native"
 
 export default function SongsScreen() {
   return (
-    <View style={{ ...defaultStyles.container, paddingTop: 100, paddingHorizontal: screenPadding.horizontal }}>
-      <TracksList />
+    <View style={defaultStyles.container}>
+      <TracksList 
+        contentInsetAdjustmentBehavior="automatic" 
+        contentContainerStyle={{ paddingHorizontal: screenPadding.horizontal }}
+      />
     </View>
   )
 }
