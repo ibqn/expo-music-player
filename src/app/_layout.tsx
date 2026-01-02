@@ -10,7 +10,7 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <RootNavigation />
-      <StatusBar style="auto" />
+      <StatusBar style="light" />
     </SafeAreaProvider>
   )
 }
