@@ -58,7 +58,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="artists"
         options={{
-          title: "Playlists",
+          title: "Artists",
           tabBarIcon: ({ color }) => <FontAwesome6 name="users-line" size={20} color={color} />,
         }}
       />
