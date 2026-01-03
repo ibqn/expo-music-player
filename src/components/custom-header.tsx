@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
     borderColor: colors.primary,
     borderRadius: 10,
     paddingHorizontal: 16,
-    paddingLeft: 48, // Make room for the search icon
+    paddingLeft: 48,
     paddingVertical: 12,
     color: colors.text,
     fontSize: 16,
