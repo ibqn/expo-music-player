@@ -1,10 +1,13 @@
+import { CustomHeader } from "@/components/custom-header"
 import { defaultStyles } from "@/styles"
-import { Text, View } from "react-native"
+import { Text } from "react-native"
+import { SafeAreaView } from "react-native-safe-area-context"
 
 export default function PlaylistsScreen() {
   return (
-    <View style={defaultStyles.container}>
+    <SafeAreaView style={defaultStyles.container}>
+      <CustomHeader title="Playlists" />
       <Text style={defaultStyles.text}>Playlists Screen</Text>
-    </View>
+    </SafeAreaView>
   )
 }

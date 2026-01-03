@@ -1,10 +1,13 @@
+import { CustomHeader } from "@/components/custom-header"
 import { defaultStyles } from "@/styles"
-import { Text, View } from "react-native"
+import { Text } from "react-native"
+import { SafeAreaView } from "react-native-safe-area-context"
 
 export default function ArtistsScreen() {
   return (
-    <View style={defaultStyles.container}>
+    <SafeAreaView style={defaultStyles.container}>
+      <CustomHeader title="Artists" />
       <Text style={defaultStyles.text}>Artists Screen</Text>
-    </View>
+    </SafeAreaView>
   )
 }
