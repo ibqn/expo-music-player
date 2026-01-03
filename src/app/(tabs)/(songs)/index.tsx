@@ -3,8 +3,9 @@ import { TracksList } from "@/components/tracks-list"
 import { colors, screenPadding } from "@/constants/tokens"
 import { useNavigationSearch } from "@/hooks/use-navigation-search"
 import { defaultStyles } from "@/styles"
-import { useMemo, useRef } from "react"
-import { Animated, Text } from "react-native"
+import { useMemo } from "react"
+import { Text } from "react-native"
+import { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated"
 import { SafeAreaView } from "react-native-safe-area-context"
 
 export default function SongsScreen() {
@@ -16,13 +17,19 @@ export default function SongsScreen() {
   )
 
   const { search } = useNavigationSearch({ searchBarOptions })
-  const scrollY = useRef(new Animated.Value(0)).current
+  const scrollY = useSharedValue(0)
+
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: (event) => {
+      scrollY.value = event.contentOffset.y
+    },
+  })
 
   return (
     <SafeAreaView style={[defaultStyles.container]}>
       <CustomHeader title="Songs" showSearch scrollY={scrollY} />
       <TracksList
-        onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], { useNativeDriver: false })}
+        onScroll={scrollHandler}
         scrollEventThrottle={16}
         ListHeaderComponent={
           search ? (
