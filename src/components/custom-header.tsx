@@ -1,6 +1,7 @@
 import { colors, screenPadding } from "@/constants/tokens"
 import { useNavigationSearch } from "@/hooks/use-navigation-search"
 import { defaultStyles } from "@/styles"
+import { MagnifyingGlassIcon } from "phosphor-react-native"
 import { useState } from "react"
 import { Dimensions, StyleSheet, Text, TextInput, View } from "react-native"
 import Animated, { Extrapolation, interpolate, SharedValue, useAnimatedStyle } from "react-native-reanimated"
@@ -18,7 +19,6 @@ export const CustomHeader = ({ title, showSearch = false, scrollY }: CustomHeade
   const { width } = Dimensions.get("window")
   const containerWidth = width - screenPadding.horizontal * 2
 
-  // Calculate actual center offset based on measured width at target size
   const centerOffset = titleWidth > 0 ? containerWidth / 2 - titleWidth / 2 : 0
 
   const animatedHeaderStyle = useAnimatedStyle(() => {
@@ -54,6 +54,7 @@ export const CustomHeader = ({ title, showSearch = false, scrollY }: CustomHeade
       <Animated.Text style={[styles.title, animatedTitleStyle]}>{title}</Animated.Text>
       {showSearch && (
         <View style={styles.searchContainer}>
+          <MagnifyingGlassIcon size={20} color={colors.textMuted} style={styles.searchIcon} />
           <TextInput
             style={styles.searchInput}
             placeholder={searchBarOptions.placeholder}
@@ -81,6 +82,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   searchContainer: {
+    position: "relative",
     marginBottom: 10,
   },
   searchInput: {
@@ -89,9 +91,16 @@ const styles = StyleSheet.create({
     borderColor: colors.primary,
     borderRadius: 10,
     paddingHorizontal: 16,
+    paddingLeft: 48, // Make room for the search icon
     paddingVertical: 12,
     color: colors.text,
     fontSize: 16,
     height: 48,
+  },
+  searchIcon: {
+    position: "absolute",
+    left: 16,
+    top: 14,
+    zIndex: 1,
   },
 })
