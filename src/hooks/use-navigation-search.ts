@@ -1,5 +1,5 @@
-import { useSearch } from "@/contexts/search-context"
-import { useEffect } from "react"
+import { SearchContext } from "@/contexts/search-context"
+import { useContext, useEffect } from "react"
 
 export type NavigationSearchProps = {
   searchBarOptions?: {
@@ -8,7 +8,13 @@ export type NavigationSearchProps = {
 }
 
 export const useNavigationSearch = ({ searchBarOptions }: NavigationSearchProps) => {
-  const { search, setSearch, setSearchBarOptions } = useSearch()
+  const context = useContext(SearchContext)
+
+  if (!context) {
+    throw new Error("useNavigationSearch must be used within a SearchProvider")
+  }
+
+  const { search, setSearch, setSearchBarOptions, searchBarOptions: contextOptions } = context
 
   useEffect(() => {
     if (searchBarOptions) {
@@ -16,5 +22,5 @@ export const useNavigationSearch = ({ searchBarOptions }: NavigationSearchProps)
     }
   }, [searchBarOptions, setSearchBarOptions])
 
-  return { search, setSearch }
+  return { search, setSearch, searchBarOptions: contextOptions }
 }

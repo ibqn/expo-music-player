@@ -1,5 +1,5 @@
 import { colors, screenPadding } from "@/constants/tokens"
-import { useSearch } from "@/contexts/search-context"
+import { useNavigationSearch } from "@/hooks/use-navigation-search"
 import { defaultStyles } from "@/styles"
 import { StyleSheet, Text, TextInput, View } from "react-native"
 
@@ -9,7 +9,7 @@ type CustomHeaderProps = {
 }
 
 export const CustomHeader = ({ title, showSearch = false }: CustomHeaderProps) => {
-  const { search, setSearch, searchBarOptions } = useSearch()
+  const { search, setSearch, searchBarOptions } = useNavigationSearch({})
 
   return (
     <View style={styles.container}>

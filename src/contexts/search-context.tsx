@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from "react"
+import { createContext, type ReactNode, useState } from "react"
 
 type SearchContextType = {
   search: string
@@ -9,16 +9,21 @@ type SearchContextType = {
   setSearchBarOptions: (options: { placeholder?: string }) => void
 }
 
-const SearchContext = createContext<SearchContextType | undefined>(undefined)
+export const SearchContext = createContext<SearchContextType>({
+  search: "",
+  setSearch: () => {},
+  searchBarOptions: { placeholder: "Search..." },
+  setSearchBarOptions: () => {},
+})
 
-export const SearchProvider = ({ children }: { children: React.ReactNode }) => {
+export const SearchProvider = ({ children }: { children: ReactNode }) => {
   const [search, setSearch] = useState("")
   const [searchBarOptions, setSearchBarOptions] = useState<{ placeholder?: string }>({
     placeholder: "Search...",
   })
 
   return (
-    <SearchContext.Provider
+    <SearchContext
       value={{
         search,
         setSearch,
@@ -27,14 +32,6 @@ export const SearchProvider = ({ children }: { children: React.ReactNode }) => {
       }}
     >
       {children}
-    </SearchContext.Provider>
+    </SearchContext>
   )
-}
-
-export const useSearch = () => {
-  const context = useContext(SearchContext)
-  if (!context) {
-    throw new Error("useSearch must be used within a SearchProvider")
-  }
-  return context
 }

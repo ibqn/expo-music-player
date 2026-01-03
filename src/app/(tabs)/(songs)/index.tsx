@@ -1,7 +1,6 @@
 import { CustomHeader } from "@/components/custom-header"
 import { TracksList } from "@/components/tracks-list"
 import { colors, screenPadding } from "@/constants/tokens"
-import { useSearch } from "@/contexts/search-context"
 import { useNavigationSearch } from "@/hooks/use-navigation-search"
 import { defaultStyles } from "@/styles"
 import { Text } from "react-native"
@@ -12,8 +11,7 @@ export default function SongsScreen() {
     placeholder: "Search songs...",
   }
 
-  useNavigationSearch({ searchBarOptions })
-  const { search } = useSearch()
+  const { search } = useNavigationSearch({ searchBarOptions })
 
   return (
     <SafeAreaView style={[defaultStyles.container]}>
