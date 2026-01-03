@@ -1,4 +1,3 @@
-import { stackScreenWithSearchBar } from "@/constants/layout"
 import { defaultStyles } from "@/styles"
 import { Stack } from "expo-router"
 import { View } from "react-native"
@@ -10,8 +9,7 @@ export default function SongsScreenLayout() {
         <Stack.Screen
           name="index"
           options={{
-            ...stackScreenWithSearchBar,
-            headerTitle: "Songs",
+            headerShown: false,
           }}
         />
       </Stack>
