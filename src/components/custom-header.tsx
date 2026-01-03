@@ -1,19 +1,73 @@
 import { colors, screenPadding } from "@/constants/tokens"
 import { useNavigationSearch } from "@/hooks/use-navigation-search"
 import { defaultStyles } from "@/styles"
-import { StyleSheet, Text, TextInput, View } from "react-native"
+import { useState } from "react"
+import { Animated, Dimensions, StyleSheet, Text, TextInput, View } from "react-native"
 
 type CustomHeaderProps = {
   title: string
   showSearch?: boolean
+  scrollY?: Animated.Value
 }
 
-export const CustomHeader = ({ title, showSearch = false }: CustomHeaderProps) => {
+export const CustomHeader = ({ title, showSearch = false, scrollY }: CustomHeaderProps) => {
   const { search, setSearch, searchBarOptions } = useNavigationSearch({})
+  const [titleWidth, setTitleWidth] = useState(0)
+
+  const { width } = Dimensions.get("window")
+  const containerWidth = width - screenPadding.horizontal * 2
+
+  const paddingTop = scrollY
+    ? scrollY.interpolate({
+        inputRange: [0, 100],
+        outputRange: [60, 0],
+        extrapolate: "clamp",
+      })
+    : 60
+
+  const titleFontSize = scrollY
+    ? scrollY.interpolate({
+        inputRange: [0, 100],
+        outputRange: [34, 24],
+        extrapolate: "clamp",
+      })
+    : 34
+
+  // Calculate actual center offset based on measured width at target size
+  const centerOffset = titleWidth > 0 ? containerWidth / 2 - titleWidth / 2 : 0
+
+  const titleTranslateX = scrollY
+    ? scrollY.interpolate({
+        inputRange: [0, 100],
+        outputRange: [0, centerOffset],
+        extrapolate: "clamp",
+      })
+    : 0
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>{title}</Text>
+    <Animated.View style={[styles.container, { paddingTop }]}>
+      {/* Hidden text to measure width at target font size */}
+      <Text
+        style={[styles.title, { fontSize: 24, position: "absolute", opacity: 0 }]}
+        onLayout={(event) => {
+          const { width } = event.nativeEvent.layout
+          setTitleWidth(width)
+        }}
+      >
+        {title}
+      </Text>
+
+      <Animated.Text
+        style={[
+          styles.title,
+          {
+            fontSize: titleFontSize,
+            transform: [{ translateX: titleTranslateX }],
+          },
+        ]}
+      >
+        {title}
+      </Animated.Text>
       {showSearch && (
         <View style={styles.searchContainer}>
           <TextInput
@@ -26,13 +80,12 @@ export const CustomHeader = ({ title, showSearch = false }: CustomHeaderProps) =
           />
         </View>
       )}
-    </View>
+    </Animated.View>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 60,
     paddingBottom: 20,
     paddingHorizontal: screenPadding.horizontal,
     backgroundColor: colors.background,
