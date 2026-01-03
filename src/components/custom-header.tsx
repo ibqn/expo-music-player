@@ -28,7 +28,7 @@ export const CustomHeader = ({ title, showSearch = false, scrollY }: CustomHeade
   const titleFontSize = scrollY
     ? scrollY.interpolate({
         inputRange: [0, 100],
-        outputRange: [34, 24],
+        outputRange: [34, 20],
         extrapolate: "clamp",
       })
     : 34
@@ -48,7 +48,7 @@ export const CustomHeader = ({ title, showSearch = false, scrollY }: CustomHeade
     <Animated.View style={[styles.container, { paddingTop }]}>
       {/* Hidden text to measure width at target font size */}
       <Text
-        style={[styles.title, { fontSize: 24, position: "absolute", opacity: 0 }]}
+        style={[styles.title, { fontSize: 20, position: "absolute", opacity: 0, pointerEvents: "none" }]}
         onLayout={(event) => {
           const { width } = event.nativeEvent.layout
           setTitleWidth(width)
