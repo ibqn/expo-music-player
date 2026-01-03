@@ -1,9 +1,9 @@
 import { colors, screenPadding } from "@/constants/tokens"
 import { useNavigationSearch } from "@/hooks/use-navigation-search"
 import { defaultStyles } from "@/styles"
-import { MagnifyingGlassIcon } from "phosphor-react-native"
+import { MagnifyingGlassIcon, XIcon } from "phosphor-react-native"
 import { useState } from "react"
-import { Dimensions, StyleSheet, Text, TextInput, View } from "react-native"
+import { Dimensions, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
 import Animated, { Extrapolation, interpolate, SharedValue, useAnimatedStyle } from "react-native-reanimated"
 
 type CustomHeaderProps = {
@@ -61,8 +61,12 @@ export const CustomHeader = ({ title, showSearch = false, scrollY }: CustomHeade
             placeholderTextColor={colors.textMuted}
             value={search}
             onChangeText={setSearch}
-            clearButtonMode="while-editing"
           />
+          {search.length > 0 && (
+            <TouchableOpacity style={styles.clearButton} onPress={() => setSearch("")}>
+              <XIcon size={12} color={colors.background} weight="bold" />
+            </TouchableOpacity>
+          )}
         </View>
       )}
     </Animated.View>
@@ -90,8 +94,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.primary,
     borderRadius: 10,
-    paddingHorizontal: 16,
     paddingLeft: 48,
+    paddingRight: 40,
     paddingVertical: 12,
     color: colors.text,
     fontSize: 16,
@@ -102,5 +106,16 @@ const styles = StyleSheet.create({
     left: 16,
     top: 14,
     zIndex: 1,
+  },
+  clearButton: {
+    position: "absolute",
+    right: 12,
+    top: 12,
+    width: 24,
+    height: 24,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 12,
+    backgroundColor: colors.textMuted,
   },
 })
