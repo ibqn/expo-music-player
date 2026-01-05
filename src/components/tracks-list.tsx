@@ -13,9 +13,10 @@ type Track = {
 
 type TrackListProps = Partial<ComponentProps<typeof Animated.FlatList<Track>>>
 
-export const TracksList = (props: TrackListProps) => {
+export const TracksList = ({ contentContainerStyle, ...props }: TrackListProps) => {
   return (
     <Animated.FlatList
+      contentContainerStyle={[contentContainerStyle, { paddingBottom: 128 }]}
       data={tracksData as Track[]}
       ItemSeparatorComponent={() => <ItemSeparator />}
       renderItem={({ item: track }) => <TrackListItem track={track} />}
