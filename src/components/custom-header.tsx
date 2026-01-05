@@ -4,7 +4,7 @@ import { defaultStyles } from "@/styles"
 import { MagnifyingGlassIcon, XIcon } from "phosphor-react-native"
 import { useRef, useState } from "react"
 import { Dimensions, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
-import Animated, { Extrapolation, interpolate, SharedValue, useAnimatedStyle } from "react-native-reanimated"
+import Animated, { Extrapolation, interpolate, SharedValue, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated"
 
 type CustomHeaderProps = {
   title: string
@@ -17,6 +17,7 @@ export const CustomHeader = ({ title, showSearch = false, scrollY }: CustomHeade
   const [titleWidth, setTitleWidth] = useState(0)
   const [isInputFocused, setIsInputFocused] = useState(false)
   const inputRef = useRef<TextInput>(null)
+  const focusProgress = useSharedValue(0)
 
   const { width } = Dimensions.get("window")
   const containerWidth = width - screenPadding.horizontal * 2
@@ -24,9 +25,11 @@ export const CustomHeader = ({ title, showSearch = false, scrollY }: CustomHeade
   const centerOffset = titleWidth > 0 ? containerWidth / 2 - titleWidth / 2 : 0
 
   const animatedHeaderStyle = useAnimatedStyle(() => {
-    const paddingTop = scrollY ? interpolate(scrollY.value, [0, 100], [60, 0], Extrapolation.CLAMP) : 60
+    const scrollBasedPadding = scrollY ? interpolate(scrollY.value, [0, 100], [60, 0], Extrapolation.CLAMP) : 60
+    const paddingTop = interpolate(focusProgress.value, [0, 1], [scrollBasedPadding, 0], Extrapolation.CLAMP)
+    const paddingBottom = interpolate(focusProgress.value, [0, 1], [20, 10], Extrapolation.CLAMP)
 
-    return { paddingTop }
+    return { paddingTop, paddingBottom }
   })
 
   const animatedTitleStyle = useAnimatedStyle(() => {
@@ -34,10 +37,23 @@ export const CustomHeader = ({ title, showSearch = false, scrollY }: CustomHeade
 
     const translateX = scrollY ? interpolate(scrollY.value, [0, 100], [0, centerOffset], Extrapolation.CLAMP) : 0
 
+    const opacity = interpolate(focusProgress.value, [0, 1], [1, 0], Extrapolation.CLAMP)
+    const marginBottom = interpolate(focusProgress.value, [0, 1], [20, 0], Extrapolation.CLAMP)
+    const scaleY = interpolate(focusProgress.value, [0, 1], [1, 0], Extrapolation.CLAMP)
+
     return {
       fontSize,
-      transform: [{ translateX }],
+      transform: [{ translateX }, { scaleY }],
+      opacity,
+      marginBottom,
+      transformOrigin: 'top',
     }
+  })
+
+  const animatedSearchRowStyle = useAnimatedStyle(() => {
+    const marginBottom = interpolate(focusProgress.value, [0, 1], [10, 0], Extrapolation.CLAMP)
+
+    return { marginBottom }
   })
 
   return (
@@ -55,7 +71,7 @@ export const CustomHeader = ({ title, showSearch = false, scrollY }: CustomHeade
 
       <Animated.Text style={[styles.title, animatedTitleStyle]}>{title}</Animated.Text>
       {showSearch && (
-        <View style={styles.searchRow}>
+        <Animated.View style={[styles.searchRow, animatedSearchRowStyle]}>
           <View style={styles.searchContainer}>
             <MagnifyingGlassIcon size={20} color={colors.textMuted} style={styles.searchIcon} />
             <TextInput
@@ -65,8 +81,14 @@ export const CustomHeader = ({ title, showSearch = false, scrollY }: CustomHeade
               placeholderTextColor={colors.textMuted}
               value={search}
               onChangeText={setSearch}
-              onFocus={() => setIsInputFocused(true)}
-              onBlur={() => setIsInputFocused(false)}
+              onFocus={() => {
+                setIsInputFocused(true)
+                focusProgress.value = withTiming(1, { duration: 300 })
+              }}
+              onBlur={() => {
+                setIsInputFocused(false)
+                focusProgress.value = withTiming(0, { duration: 300 })
+              }}
             />
             {search.length > 0 && (
               <TouchableOpacity style={styles.clearButton} onPress={() => setSearch("")}>
@@ -85,7 +107,7 @@ export const CustomHeader = ({ title, showSearch = false, scrollY }: CustomHeade
               <Text style={styles.cancelText}>Cancel</Text>
             </TouchableOpacity>
           )}
-        </View>
+        </Animated.View>
       )}
     </Animated.View>
   )
