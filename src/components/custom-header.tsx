@@ -2,7 +2,7 @@ import { colors, screenPadding } from "@/constants/tokens"
 import { useNavigationSearch } from "@/hooks/use-navigation-search"
 import { defaultStyles } from "@/styles"
 import { MagnifyingGlassIcon, XIcon } from "phosphor-react-native"
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { Dimensions, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
 import Animated, { Extrapolation, interpolate, SharedValue, useAnimatedStyle } from "react-native-reanimated"
 
@@ -15,6 +15,8 @@ type CustomHeaderProps = {
 export const CustomHeader = ({ title, showSearch = false, scrollY }: CustomHeaderProps) => {
   const { search, setSearch, searchBarOptions } = useNavigationSearch({})
   const [titleWidth, setTitleWidth] = useState(0)
+  const [isInputFocused, setIsInputFocused] = useState(false)
+  const inputRef = useRef<TextInput>(null)
 
   const { width } = Dimensions.get("window")
   const containerWidth = width - screenPadding.horizontal * 2
@@ -53,18 +55,34 @@ export const CustomHeader = ({ title, showSearch = false, scrollY }: CustomHeade
 
       <Animated.Text style={[styles.title, animatedTitleStyle]}>{title}</Animated.Text>
       {showSearch && (
-        <View style={styles.searchContainer}>
-          <MagnifyingGlassIcon size={20} color={colors.textMuted} style={styles.searchIcon} />
-          <TextInput
-            style={styles.searchInput}
-            placeholder={searchBarOptions.placeholder}
-            placeholderTextColor={colors.textMuted}
-            value={search}
-            onChangeText={setSearch}
-          />
-          {search.length > 0 && (
-            <TouchableOpacity style={styles.clearButton} onPress={() => setSearch("")}>
-              <XIcon size={12} color={colors.background} weight="bold" />
+        <View style={styles.searchRow}>
+          <View style={styles.searchContainer}>
+            <MagnifyingGlassIcon size={20} color={colors.textMuted} style={styles.searchIcon} />
+            <TextInput
+              ref={inputRef}
+              style={styles.searchInput}
+              placeholder={searchBarOptions.placeholder}
+              placeholderTextColor={colors.textMuted}
+              value={search}
+              onChangeText={setSearch}
+              onFocus={() => setIsInputFocused(true)}
+              onBlur={() => setIsInputFocused(false)}
+            />
+            {search.length > 0 && (
+              <TouchableOpacity style={styles.clearButton} onPress={() => setSearch("")}>
+                <XIcon size={12} color={colors.background} weight="bold" />
+              </TouchableOpacity>
+            )}
+          </View>
+          {isInputFocused && (
+            <TouchableOpacity
+              style={styles.cancelButton}
+              onPress={() => {
+                inputRef.current?.blur()
+                setSearch("")
+              }}
+            >
+              <Text style={styles.cancelText}>Cancel</Text>
             </TouchableOpacity>
           )}
         </View>
@@ -85,9 +103,15 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     marginBottom: 20,
   },
+  searchRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+  },
   searchContainer: {
     position: "relative",
-    marginBottom: 10,
+    flex: 1,
+    marginRight: 12,
   },
   searchInput: {
     backgroundColor: "#1a1a1a",
@@ -117,5 +141,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 12,
     backgroundColor: colors.textMuted,
+  },
+  cancelButton: {
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+  },
+  cancelText: {
+    color: "#ff4444",
+    fontSize: 16,
+    fontWeight: "500",
   },
 })
